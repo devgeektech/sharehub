@@ -1,0 +1,272 @@
+<div class="container-fluid picogram_total ">
+   <div class="container-fluid pico_total merri_header">
+      <div class="container pico_header">
+         <div class="picogram_logo col-xs-6 col-sm-4 col-md-4 zero_padding" >
+            <a  [hidden]="isLogin"  [routerLink]="['']"><span class="logo_image">
+            <img class="isWider" src="/public/images/pico_logo_new.png" height="24">
+            <img class="isMobile" src="/public/images/pico_logo_new.png" height="22">
+            </span></a>
+            <a  [hidden]="!isLogin" (click)="login(1)"><span class="logo_image">
+            <img class="isWider" src="/public/images/pico_logo_new.png" height="24">
+            <img class="isMobile" src="/public/images/pico_logo_new.png" height="22">
+            </span></a>
+         </div>
+         <!--For Wider Views-->
+         <div  [hidden]="!isLogin" class="col-xs-6 col-sm-8 col-md-8 pad-rt zero_padding" >
+            <span class="activity_feed dropdown-toggle member_name" data-toggle="dropdown">
+               <div class="isWider pos_rel_txt_rt"><span class="badge noti-bell">0</span>
+                  <img src="/public/Icons/bell.png" height="24">
+               </div>
+               <div class="isMobile pos_rel_txt_rt"><span class="badge noti-bell">0</span>
+                  <img src="/public/Icons/bell.png" height="22" class="fright">
+               </div>
+            </span>
+            <!-- dropdown menu-->
+            <ul class="dropdown-menu notification1" >
+               <!--<span class="bufferdiscover_gif" id="" [hidden]="!recentactivityloader" style="left: 45%;top: 20%;"><img src="/public/images/ajax-loader2.gif" alt="loader"></span>					  -->
+               <div class="profilename_comment drop_down_list col-xs-12" (click)="login(0)">
+                  <span class="follow_detailss col-xs-1">
+                  </span>
+                  <span class="name_comment col-xs-11 crsr-ptr zero_padding">
+                  <span class="color_thick member_name" >Log In</span>
+                  </span>
+               </div>
+               <div class="profilename_comment drop_down_list col-xs-12" (click)="login(1)">
+                  <span class="follow_detailss col-xs-1">
+                  </span>
+                  <span class="name_comment col-xs-11 crsr-ptr zero_padding">
+                  <span class="color_thick member_name" >Sign Up</span>
+                  </span>
+               </div>
+            </ul>
+         </div>
+         <div  [hidden]="isLogin" class="col-xs-6 col-sm-8 col-md-8 pad-rt zero_padding">
+            <!--Search Pannel-->
+            <div class="col-md-4 col-sm-2  col-xs-0"></div>
+            <div class="picogram_search  col-xs-0 col-sm-8 col-md-6 isWider m_tp-5">
+               <!--<span class="searchicon"><i class="pico_search_icon search_icon"></i><input type="text" #box (keyup)="onKey(box.value)" (keyup.enter)="usersearchSubmit(box.value); box.value=''" (blur)="blursearch()" id="searchPico" (click)="searchopen()" class="form-control search_type" placeholder="Search"></span>-->
+               <div style="search_outer" >
+                  <div class="form-group">
+                     <div class="searchDiv"><img src="/public/Icons/magnifier.png" width="16" class="searchIcon"></div>
+                     <input type="text" #box (keyup)="onKey(box.value)" (keyup.enter)="usersearchSubmit(box.value); box.value=''" (blur)="blursearch()"
+                     id="searchPico" (click)="searchopen()" class="form-control search_input" placeholder="Search">
+                  </div>
+                  <div *ngIf="blur_close"  class="search_inner">
+                     <!--<div class="search_arrowicon" *ngIf="data || dataPro"></div>-->
+                     <ul class="serarch_dropdown zero_padding col-xs-12 bg_white" *ngIf="data  || dataPro">
+                        <span>
+                           <div class="profilename_comment drop_down_list col-xs-12 ht_50_pad_2p" [hidden]="!search_person" *ngFor="let item of data.userData" (click)="memberprofile(item)">
+                           <span class="follow_detailss col-xs-2 zero_padding">
+                                <div class="suggestion_image member_name sg_pro_img_bg_noti crsr-ptr"   [style.background]="'url('+checkImgURL(item.memberProfilePicUrl)+ ')'"  [style.background-size]="'cover'" [style.background-position]="'center'" [style.background-repeat]="'no-repeat'">
+				       </div>      
+                           <!--<img class="suggestion_image" src="{{item.memberProfilePicUrl}}" onerror="this.src='/public/images/user.jpg'">-->
+                           </span>
+                           <span class=" zero_padding col-xs-10 text-left " >
+                              <h5 class="color_thick member_name zero_padding" >{{item.membername}}</h5>
+                              <h6 class="color_thick color_opacity zero_padding"> {{item.memberFullName}} </h6>
+                           </span>
+                  </div>
+                  <span  *ngIf="dataPro">
+                  <div class="profilename_comment drop_down_list col-xs-12 ht_50_pad_2p" [hidden]="!search_product" *ngFor="let item of dataPro" (click)="gotToProduct(item)" >
+                  <span class="follow_detailss col-xs-2 zero_padding">
+                  <img class="suggestion_image" src="{{item.mainUrl}}" onerror="this.src='/public/images/user.jpg'">
+                  </span>
+                  <span class="zero_padding col-xs-10 text-left">
+                  <h5 class="color_thick member_name zero_padding" >{{item.productName}}</h5>
+                  <h6 class="color_thick color_opacity zero_padding"> {{item.owner.businessName}} </h6>					
+                  </span>
+               </div>
+               </span>
+               <div class="profilename_comment drop_down_list col-xs-12 ht_50_pad_2p" [hidden]="!search_hashtag" *ngFor="let item of data.hashTagData"
+               (click)="memberprofilehashtag(item)">
+               <span class="follow_detailss col-xs-2 zero_padding">
+               <span class="hastag_icon hastagicon"></span>
+               </span>
+               <span class=" zero_padding col-xs-10 text-left m_tp-5">
+               <h5 class="color_thick member_name zero_padding" (click)="memberprofilehashtag(item)">{{item.hashTagName}}</h5>
+               <h6 class="color_thick color_opacity zero_padding"> {{item.hashTagCount}} posts</h6>								
+               </span>
+            </div>
+            <div class="profilename_comment drop_down_list col-xs-12 ht_50_pad_2p" [hidden]="!search_location" *ngFor="let item of data.placeData"
+            (click)="memberprofilelocation(item)">
+            <span class="follow_detailss col-xs-2 zero_padding">
+            <span class="location_icon locationicon"></span>
+            </span>
+            <span class=" zero_padding col-xs-10 text-left">
+            <h5 class="color_thick member_name zero_padding" (click)="memberprofilelocation(item)">{{item.placename}}</h5>
+            <h6 class="color_thick color_opacity zero_padding"> {{item.memberFullName}} </h6>							
+            </span>
+         </div>
+         </span>
+         <div class="profilename_comment drop_down_list col-xs-12 zero_padding" *ngIf="data.userData.length == 0 && data.hashTagData.length == 0 && data.placeData.length == 0">
+         <span class="color_opacity">No results found.</span>
+         </div>
+         </ul>
+      </div>
+   </div>
+</div>
+<!--Notification-->
+<div class="col-xs-2 col-xs-offset-8 col-sm-offset-0 col-md-offset-0 col-sm-1 col-md-1 al-rt bell-rt crsr-ptr">
+   <span class="activity_feed dropdown-toggle member_name" (click)="recentactivityy();" data-toggle="dropdown">
+      <div class="isWider pos_rel" >
+            <span class="badge noti-bell" *ngIf="notiCount>0">0</span>
+         <img src="/public/Icons/bell.png" height="24">
+      </div>
+      <div  class="isMobile pos_rel">
+            <span class="badge noti-bell" *ngIf="notiCount>0">0}</span>
+         <img src="/public/Icons/bell.png" height="22" class="f-right bell_fixed">
+      </div>
+   </span>
+   <!-- dropdown menu-->
+   <ul class="dropdown-menu notification" >
+      <div *ngIf="notiLoader" class="profilename_comment drop_down_list col-xs-12 text-center">
+         <span class="bufferlogin_gif" ><img src="/public/images/ajax-loader2.gif" alt="loader"></span>
+      </div>
+      <div  *ngIf="activityLen" class="profilename_comment drop_down_list col-xs-12 text-center">
+         <span class="color_thick member_name" >No notifications</span>
+      </div>
+      <div   class="profilename_comment drop_down_list col-xs-12" [hidden]="!reqData" *ngFor="let req of reqData; let i=index" [ngClass]="(req.seenStatus !=1)? 'noti_bg':''">
+      <div class="follow_detailss  dis_inline">
+         <!--<img  *ngIf="req.profilePicUrl !='' && req.profilePicUrl !='profilePicUrl'" class="suggestion_image member_name m_t_6" (click)="seeReq(req);" src="{{req.profilePicUrl}}" >
+         <img *ngIf="req.profilePicUrl =='' || req.profilePicUrl =='profilePicUrl'" class="suggestion_image member_name m_t_6" (click)="seeReq(req);" src="/public/images/user.jpg" >-->
+      <div class="suggestion_image member_name sg_pro_img_bg_noti crsr-ptr" (click)="seeReq(req);"   [style.background]="'url('+checkImgURL(req.profilePicUrl)+ ')'"  [style.background-size]="'cover'" [style.background-position]="'center'" [style.background-repeat]="'no-repeat'">
+	</div>
+      </div>
+      <div class="dis_inline pd_rt0_lft25" [ngClass]="(req.requestStatus == 0)?'wd_74p':'wd_90p'">
+         <span class="color_thick member_name"  (click)="memberprofile(req);">{{req.username}}</span>
+         <time class="time_mention">{{req.statusDate}}</time><br>
+         <span class="">
+            <span class="color_thick color_opacity member_name"  *ngIf="req.requestStatus == 0">requested for sponsorship</span>
+            <span class="color_thick color_opacity member_name"  *ngIf="req.requestStatus == 1 ">is now sponsored by you</span>
+            <span class="color_thick color_opacity member_name"  *ngIf="req.requestStatus == 2">sponsorship declined</span>
+         </span>
+      </div>
+      <div class="dis_inline f-right">
+<div class="accept_reject_icon" *ngIf="req.requestStatus == 0" >
+	<span class="dis_inline" (click)="rejectSponReqFun(req,i)"><i class="fa fa-times std-size accept_reject_icon" aria-hidden="true"></i></span>
+	<span class="dis_inline" (click)="acceptSponReqFun(req,i)"><i class="fa fa-check std-size accept_reject_icon" aria-hidden="true"></i></span>
+</div>
+</div>
+</div>
+<div class="profilename_comment drop_down_list col-xs-12 "  *ngFor="let item of activity; let i = index;" [hidden]="!item.notificationMessage" [ngClass]="(item.seenStatus !=1)? 'noti_bg':''">
+<!--<div *ngIf="item.type==4">-->
+<div class="follow_detailss  dis_inline">
+ <div class="suggestion_image member_name sg_pro_img_bg_noti m_t_6" (click)="memberprofile(item);"  [style.background]="'url('+checkImgURL(item.memberProfilePicUrl)+ ')'"  [style.background-size]="'cover'" [style.background-position]="'center'" [style.background-repeat]="'no-repeat'">
+</div>  
+<!--<img class="suggestion_image member_name m_t_6" (click)="memberprofile(item);" src="{{item.memberProfilePicUrl}}"  onerror="this.src='/public/images/user.jpg'">-->
+</div>
+<div class="dis_inline pd_rt0_lft25" [ngClass]="(item.notificationMessage == 'likedPost' || item.requestStatus == 0)?'wd_74p':'wd_90p'">
+<span class="color_thick member_name std-size" (click)="memberprofile(item);">{{item.membername}}</span>
+<time class="time_mention">{{item.createdOn}}</time><br>
+<span class="">
+<span class="color_thick color_opacity member_name" (click)="memberprofileactivity(item,1);" *ngIf="item.notificationMessage == 'likedPost'">liked your photo</span>
+<span class="color_thick color_opacity member_name" (click)="memberprofileactivity(item,2);" *ngIf="item.requestStatus == 0">requested to follow you</span>
+<span class="color_thick color_opacity member_name" (click)="memberprofileactivity(item,3);" *ngIf="item.notificationMessage == 'tagged'">tagged you in a post</span>
+<span class="color_thick color_opacity member_name" (click)="memberprofileactivity(item,3);" *ngIf="item.requestStatus != 2 && item.notificationMessage=='startedFollowing'">is now following you</span>
+<span class="color_thick color_opacity member_name" (click)="memberprofileactivity(item,3);" *ngIf="item.requestStatus == 2">follow request denied</span>
+<span class="color_thick color_opacity member_name" *ngIf="item.notificationMessage != 'likedPost' && item.notificationMessage != 'requestedToFollow' && item.notificationMessage != 'tagged' && item.notificationMessage != 'startedFollowing'"
+(click)="memberprofileactivity(item);">{{item.notificationMessage}}</span>
+</span>
+</div>
+<div class="dis_inline f-right">
+<!--<span class="follow_detailss col-xs-1 zero_padding" >-->
+<!--<img *ngIf="item.notificationMessage == 'likedPost'" class="likImg" (click)="memberprofileactivity(item);" src="{{item.thumbnailImageUrl}}">-->
+<div class="likImg" *ngIf="item.notificationMessage == 'likedPost'" (click)="memberprofileactivity(item)"  [style.background]="'url('+item.thumbnailImageUrl+ ')'"  [style.background-size]="'cover'" [style.background-position]="'center'" [style.background-repeat]="'no-repeat'">
+</div>
+<div class="accept_reject_icon" *ngIf="item.requestStatus == 0" >
+	<span class="dis_inline" (click)="acceptRejectReqFun(0,item,i)"><i class="fa fa-times std-size accept_reject_icon" aria-hidden="true"></i></span>
+	<span class="dis_inline" (click)="acceptRejectReqFun(1,item,i)"><i class="fa fa-check std-size accept_reject_icon" aria-hidden="true"></i></span>
+</div>
+</div>
+</div>
+</ul>
+</div>
+<!--DropDown-->
+<div [hidden]="isLogin" class="picogram_image col-xs-2 col-sm-1 col-md-1 al-rt">
+   <div class="dropdown">
+      <span data-toggle="dropdown" class="crsr-ptr">
+         <img class="isWider menu_tp" src="/public/Icons/Menu.png "height="16px">
+         <img class="isMobile menu_tp brgr_fixd" src="/public/Icons/Menu.png "height="14px">
+      </span>
+      <ul class="dropdown-menu menu-drop">
+         <li class="isMobile">
+            <div class="form-group col-md-12">
+               <div class="searchDiv tp_6"><img src="/public/Icons/magnifier.png" width="16" class="searchIcon"></div>
+               <input type="text" #box1 (keyup)="onKey(box1.value)" (keyup.enter)="usersearchSubmit(box1.value); box1.value=''" (blur)="blursearch()"
+               id="searchPico" (click)="searchopen()" class="form-control search_input" placeholder="Search">
+            </div>
+            <div *ngIf="blur_close" class="mob-search">
+               <ul class="serarch_dropdown zero_padding col-xs-12 bg_white " *ngIf="data  || dataPro">
+                  <span >
+                     <div class="profilename_comment drop_down_list col-xs-12 ht_50_pad_2p" [hidden]="!search_person" *ngFor="let item of data.userData" (click)="memberprofile(item)" >
+                     <span class="follow_detailss col-xs-2 zero_padding">
+                      <div class="suggestion_image sg_pro_img_bg_noti "  [style.background]="'url('+checkImgURL(item.memberProfilePicUrl)+ ')'"  [style.background-size]="'cover'" [style.background-position]="'center'" [style.background-repeat]="'no-repeat'">
+                      </div> 
+                     <!--<img class="suggestion_image" src="{{item.memberProfilePicUrl}}" onerror="this.src='/public/images/user.jpg'">-->
+                     </span>
+                     <span class="zero_padding col-xs-10 pad-left text-left">
+                        <h5 class="color_thick member_name zero_padding" >{{item.membername}}</h5>
+                        <h6 class="color_thick color_opacity zero_padding"> {{item.memberFullName}} </h6>
+                     </span>
+            </div>
+            <span  *ngIf="dataPro">
+            <div class="profilename_comment drop_down_list col-xs-12 ht_50_pad_2p" [hidden]="!search_product" *ngFor="let item of dataPro" (click)="gotToProduct(item)">
+            <span class="follow_detailss col-xs-2 zero_padding">
+            <img class="suggestion_image" src="{{item.mainUrl}}" onerror="this.src='/public/images/user.jpg'">
+            </span>
+            <span class=" zero_padding col-xs-10 pad-left text-left">
+            <h5 class="color_thick member_name zero_padding" >{{item.productName}}</h5>
+            <h6 class="color_thick color_opacity zero_padding"> {{item.owner.businessName}} </h6>							
+            </span>
+   </div>
+   </span>
+   <div class="profilename_comment drop_down_list col-xs-12 ht_50_pad_2p" [hidden]="!search_hashtag" *ngFor="let item of data.hashTagData" (click)="memberprofilehashtag(item)">
+   <span class="follow_detailss col-xs-2 zero_padding">
+   <span class="hastag_icon hastagicon"></span>
+   </span>
+   <span class="zero_padding col-xs-10 pad-left text-left m_tp-5">
+   <h5 class="color_thick member_name zero_padding" (click)="memberprofilehashtag(item)">{{item.hashTagName}}</h5>
+   <h6 class="color_thick color_opacity zero_padding"> {{item.hashTagCount}} posts</h6>								
+   </span>
+</div>
+<div class="profilename_comment drop_down_list col-xs-12 ht_50_pad_2p" [hidden]="!search_location" *ngFor="let item of data.placeData" (click)="memberprofilelocation(item)">
+<span class="follow_detailss col-xs-2 zero_padding">
+<span class="location_icon locationicon"></span>
+</span>
+<span class="zero_padding col-xs-10 text-left">
+<h5 class="color_thick member_name zero_padding" (click)="memberprofilelocation(item)">{{item.placename}}</h5>
+<h6 class="color_thick color_opacity zero_padding"> {{item.memberFullName}} </h6>							
+</span>
+</div>
+</span>
+<div class="profilename_comment drop_down_list col-xs-12 zero_padding" *ngIf="data.userData.length == 0 && data.hashTagData.length == 0 && data.placeData.length == 0">
+<span class="color_opacity">No results found.</span>
+</div>
+</ul>
+</div>
+</li>
+<li class="menuLi" [routerLink]="['/createpost']"><a><img src="/public/Icons/plus.png" width="20">  Post</a></li>
+<li class="menuLi" [routerLink]="['/explore']"><a><img src="/public/Icons/compass.png" width="20">  Explore</a></li>
+<li class="menuLi" (click)="list()"><a><img src="/public/Icons/star.png" width="20">  Lists</a></li>
+<li class="menuLi" [routerLink]="['/profile']"><a><img src="/public/Icons/male-user.png" width="20">  Profile</a></li>
+<li class="menuLi" [routerLink]="['/settings']"><a><img src="/public/Icons/settings.png" width="20">  Settings</a></li>
+<li class="menuLi" (click)="logout()"><a><img src="/public/Icons/logout.png" width="20">  Log Out</a></li>
+
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- login modal -->
+<div class="modal fade" id="loginModal" role="dialog">
+   <div class="modal-dialog modal-md lgn_mdl_tp">
+      <div class="modal-content">
+         <div class="modal-body">
+            <publicLogin  [dataObj]="dataObj"></publicLogin>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- End popup modal -->

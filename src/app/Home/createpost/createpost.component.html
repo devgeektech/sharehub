@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Merriment - Find your happy place</title>
+    <link rel="icon" type="image/gif/png" href="/app/public/images/picoTitleLogo.png">
+    <style>
+        .uploadPercent{
+            position: absolute;
+            font-size: 35px;
+            color: white;
+            font-weight: bold;
+            bottom: 25px;
+            left: 50px;
+        }
+    </style>
+</head>
+
+<header></header>
+<div class="loader" *ngIf="loading">
+</div>
+<div class="container-fluid picogram_total creatPostContainer bg_grey">
+    <div class="row">
+        <div class="col-md-6 frm-grp">
+            <span [hidden]="hidden">
+        <label  class="uploader dp_block"  ondragover="return false;"
+            [class.loaded]="loaded" 
+            [style.outlineColor]="dragging ? activeColor : baseColor"
+            (dragenter)="handleDragEnter()"
+            (dragleave)="handleDragLeave()"
+            (drop)="handleDrop($event)">
+        
+                <div class="imgArea">
+                    <div class="plusOnImagae"><i class="fa fa-upload" aria-hidden="true"></i></div>
+                </div>
+            <form method="post" enctype="multipart/form-data">
+            <input type="file" name="file" accept="image/*"
+                (change)="handleInputChange($event)">
+            </form>
+            <span class="uploadPercent" [hidden]="!uploaDing">{{percentComplete}} %</span>
+        </label>
+
+  <!--</label>-->
+        </span>
+            <div class="inside imgArea ht_auto" id="display" [hidden]="isLoaded"   click-outside (clickOutside)="onClickOutside($event)">
+                <div id="previewImage"  >
+                    <img  class="inside imgPre" [src]="imageSrc" (click)="getCoordinates($event)" [class.loaded]="imageLoaded" />
+                    <!--<div class="tagUserBox"   > <input type="text"></div>-->
+
+                    <div  class="inside pico_contentdetails_tagged col-xs-12 show_img tag_div_cont">
+                        <span *ngFor="let tagged of coordsImage;let i = index">
+                        	<span *ngIf="tagged.isRight" class="inside tagg_color_name tagg_color"
+                              [style.top]="tagged.top + 'px'" [style.right]="tagged.left + 'px'">														
+								<div class="inside tagg_arrowicon rt_0"></div>
+								<span *ngIf="!tagged.imageUrl" class="p_rt_10 fnt_12">{{tagged.name}}	
+                                    <div class="inside dlt-tag rt_5" (click)="deleteTag(tagged)">×</div>
+                                </span>
+                                <span class="inside pad_tb_2" *ngIf="tagged.imageUrl">
+                                    <span class="follow_detailss col-xs-2 zero_padding p_t_2 m_t_4" >
+                                        <img class="suggestion_image brder_rad_0" height="10" width="10" src="{{tagged.imageUrl}}">
+                                    </span>
+                                    <span class="name_comment zero_padding col-xs-10 pro_tag_show_cont clr_white">
+                                        <h5 class="color_thick member_name zero_padding clr_white fnt_12">{{tagged.productName}}</h5>
+                                        <h6 class="color_thick color_opacity zero_padding clr_white fnt_12">by {{tagged.name}} </h6>                               
+                                        <div class="dlt-tag rt_-4" (click)="deleteTag(tagged)">×</div>
+                                    </span>
+                                </span>
+                        </span>
+                        <span *ngIf="!tagged.isRight" class="tagg_color_name tagg_color" (click)="usertaggedname(tagged);" [style.top]="tagged.top + 'px'"
+                            [style.left]="tagged.left + 'px'">														
+								<div class="tagg_arrowicon lft_6"></div>
+								<span *ngIf="!tagged.imageUrl"  class="p_rt_10 fnt_12">{{tagged.name}}	
+                                    <div class="dlt-tag rt_5" (click)="deleteTag(tagged)">×</div>
+                                </span>
+                        <span *ngIf="tagged.imageUrl"  class="pad_tb_2">
+                                     <span class="follow_detailss col-xs-2 zero_padding p_t_2 m_t_4">
+                                    <img class="suggestion_image brder_rad_0" height="10" width="10" src="{{tagged.imageUrl}}">
+                                </span>
+                                <span class="name_comment zero_padding col-xs-10 pro_tag_show_cont clr_white">
+                                    <h5 class="color_thick member_name zero_padding clr_white fnt_12">{{tagged.productName}}</h5>
+                                    <h6 class="color_thick color_opacity zero_padding clr_white fnt_12">by {{tagged.name}} </h6>                               
+                                <div class="dlt-tag rt_-4" (click)="deleteTag(tagged)" >×</div>
+                                </span>
+                        </span>
+                        </span>
+                        </span>
+                    </div>
+                </div>
+                <div   [hidden]="isClickon" class="inside tagUserBox" [style.top]="y + 'px'" [style.left]="x + 'px'">
+                
+                    <div class="inside innerDiv">
+                        <span [hidden]="isUserTaggedIn">
+                        <span [hidden]="!isSponsoredPostType">
+                        <div class="inside searchDiv1"><img src="/public/Icons/magnifier.png" width="15" class="searchIcon"></div>
+                        <input type="text" autofocus #box (keyup)="onKey(box.value)" (keyup.enter)="usersearchSubmit(box.value); box.value=''" (blur)="blursearch()"
+                            id="searchPico" (click)="searchopen()" class="inside form-control tagSearch" placeholder="Search people">
+                        <div>
+                            <ul class="inside serarch_dropdown zero_padding tagDrop" *ngIf="data">
+                                <div class="inside profilename_comment drop_down_list ht_50_pad_2p" [hidden]="!search_person" *ngFor="let item of data.userData" (click)="userTagged(item);">
+                                    <span class="inside name_comment follow_detailss col-xs-2 zero_padding">
+                                       <img class="inside suggestion_image"  src="{{item.memberProfilePicUrl}}"  onerror="this.src='/public/images/user.jpg'">	
+                                   </span>
+                               <span class="inside zero_padding col-xs-10 text-left">
+                                    <h5 class="inside color_thick member_name zero_padding" >{{item.membername}}</h5>
+                                    <h6 class="inside color_thick color_opacity zero_padding"> {{item.memberFullName}} </h6>                               
+                                </span>
+                    </div>
+                    <div class="inside profilename_comment drop_down_list col-xs-12 zero_padding" *ngIf="data.userData.length == 0">
+                        <span class="color_opacity">No results found.</span>
+                    </div>
+                    </ul>
+                </div>
+                </span>
+                      <span [hidden]="isSponsoredPostType">
+                        <div class="inside searchDiv1"><img src="/public/Icons/magnifier.png" width="15" class="searchIcon"></div>
+                        <input autofocus type="text" #sponsored1 (keyup)="filterSponsoredUser(sponsored1.value)" (keyup.enter)="filterSponsoredUser(sponsored1.value); sponsored1.value=''" (blur)="blursearch()"
+                            id="searchSponsored1" (click)="searchopen()" class="inside form-control tagSearch" placeholder="Search people">
+                        <div>
+                            <!--<div class="search_arrowicon" *ngIf="data"></div>-->
+                            <ul class="inside serarch_dropdown zero_padding tagDrop">
+                                <div class="inside profilename_comment drop_down_list ht_50_pad_2p"  *ngFor="let item of sponsorList" (click)="userTagged(item);">
+                                    <span class="inside name_comment follow_detailss col-xs-2 zero_padding">
+                                        <img class="inside suggestion_image" src="{{item.profilePicUrl}}" onerror="this.src='/public/images/user.jpg'">
+                                    </span>
+                                    <span class="inside zero_padding col-xs-10 text-left">
+                                        <h5 class="inside color_thick member_name zero_padding" >{{item.username}}</h5>
+                                        <h6 class="inside color_thick color_opacity zero_padding"> {{item.businessName}} </h6>                               
+                                    </span>
+                               </div>
+                                <div class="inside profilename_comment drop_down_list col-xs-12 zero_padding" *ngIf="sponsorList.length == 0">
+                                    <span class="color_opacity">No results found.</span>
+                                </div>
+                            </ul>
+                         </div>
+                    </span>
+        </span>
+                <span [hidden]="isSponsoredTaggedIn">
+                        <div class="inside searchDiv1"><img src="/public/Icons/magnifier.png" width="15" class="searchIcon"></div>
+                        <input autofocus type="text" #sponsored (keyup)="filterSponsoredUser(sponsored.value)" (keyup.enter)="filterSponsoredUser(sponsored.value); sponsored.value=''" (blur)="blursearch()"
+                            id="searchSponsored" (click)="searchopen()" class="inside form-control tagSearch" placeholder="Select Sponsor">
+                        <div>
+                            <!--<div class="search_arrowicon" *ngIf="data"></div>-->
+                            <ul class="inside serarch_dropdown zero_padding tagDrop">
+                                <div class="inside profilename_comment drop_down_list ht_50_pad_2p"  *ngFor="let item of sponsorList" (click)="sponsoredTagged(item);">
+                                    <span class="inside name_comment follow_detailss col-xs-2 zero_padding">
+                                    <img class="inside suggestion_image" src="{{item.profilePicUrl}}" onerror="this.src='/public/images/user.jpg'">
+                                </span>
+                <span class="inside zero_padding col-xs-10 text-left">
+                                    <h5 class="inside color_thick member_name zero_padding" >{{item.username}}</h5>
+                                    <h6 class="inside color_thick color_opacity zero_padding"> {{item.businessName}} </h6>                               
+                                </span>
+            </div>
+            <div class="inside profilename_comment drop_down_list col-xs-12 zero_padding" *ngIf="sponsorList.length == 0">
+                <span class="color_opacity">No results found.</span>
+            </div>
+            </ul>
+        </div>
+        </span>
+        <span [hidden]="isproductTaggedIn">
+                       <div class="inside searchDiv1"><img src="/public/Icons/magnifier.png" width="15" class="searchIcon"></div>
+                        <input autofocus type="text" #product (keyup)="filterSponsoredProduct(product.value)" (keyup.enter)="filterSponsoredProduct(product.value); product.value=''" (blur)="blursearch()"
+                            id="searchProduct" (click)="searchopen()" class="inside form-control tagSearch" placeholder="Select Product">
+                         <div>
+                            <ul class="inside serarch_dropdown zero_padding tagDrop" >
+                                <div class="inside profilename_comment drop_down_list ht_50_pad_2p"  *ngFor="let item of sponsorProductList" (click)="porductTagged(item);">
+                                    <span class="inside follow_detailss col-xs-2 zero_padding">
+                                    <img class="inside suggestion_image" src="{{item.mainUrl}}">
+                                </span>
+                               <span class="inside name_comment zero_padding col-xs-10 text-left pad-left m_t_7">
+                                    <h5 class="inside color_thick member_name zero_padding" >{{item.productName}}</h5>                              
+                                </span>
+    </div>
+    <div class="profilename_comment drop_down_list col-xs-12 zero_padding" *ngIf="sponsorProductList.length == 0">
+        <span class="color_opacity">No results found.</span>
+    </div>
+    </ul>
+</div>
+</span>
+</div>
+</div>
+
+
+</div>
+<div [hidden]="taggingDone" (click)="taggingDoneFun();" class="doneTagging">
+ Done Tagging
+</div>
+</div>
+<div class="col-md-6 frm-grp postCreatMenu">
+    <ul class="nav nav-tabs frm-grp"  *ngIf="isBusiness ==1 || isBusiness =='1'">
+        <li *ngIf="isBusiness ==1 || isBusiness =='1'" class="active"><a data-toggle="tab" href="#standard" (click)="isSponsoredPostFun(0);">Standard</a></li>
+        <li *ngIf="isBusiness==1 || isBusiness=='1'"><a data-toggle="tab" href="#sponsored" (click)="isSponsoredPostFun(1);">Sponsored</a></li>
+        <li *ngIf="isBusiness==1 || isBusiness=='1'"><a id="productId" data-toggle="tab" href="#product" (click)="isSponsoredPostFun(0);">Product</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="standard" class="tab-pane fade in active">
+            <form [formGroup]="standaredForm">
+                <div class="form-group frm-grp col-md-12">
+                    <textarea [(ngModel)]="standaredForm.postCaption" name="postCaption" class="form-control" rows="5"
+                        id="comment" placeholder="Write a caption..."></textarea>
+                </div>
+                <div class="inside form-group frm-grp col-md-12 mar_25_0">
+                    <a class="inside icon std-size" (click)="tagTitle(1)"><img class='inside' src="/public/Icons/tag.png" height="22"> {{tagTitle1}}</a>
+                </div>
+                <div class="form-group frm-grp col-md-12 mar_25_0">
+                    <a class="icon std-size" (click)="addStandardLocation()"><img src="/public/Icons/pointer.png" height="22"> Add Location</a>
+
+                </div>
+                <div class="form-group frm-grp col-md-12" [hidden]="standardLocation">
+                    <input id="pac-input1" class="form-control" name="location" type="text" placeholder="Enter a location">
+                </div>
+     
+                <div class="form-group frm-grp col-md-12">
+                    <span [hidden]="error" class="col-xs-12 zero_padding error_show alert-danger">{{msg}}</span>
+                    <span [hidden]="success" class="col-xs-12 zero_padding error_show alert-success">{{msg}}</span>
+                </div>
+                <div class="form-group frm-grp col-md-12">
+                    <button type="button" class="btn btn-default pro-btn btn_height" (click)=createPost($event,1)>POST</button>
+                </div>
+            </form>
+        </div>
+        <div id="sponsored" class="tab-pane fade">
+            <form [formGroup]="sponsoredForm">
+                <div class="form-group frm-grp col-md-12">
+                    <textarea [(ngModel)]="sponsoredForm.postCaption" name="postCaption" class="form-control" rows="5"
+                        id="comment" placeholder="Write a caption..."></textarea>
+                </div>
+                <div class="inside form-group frm-grp col-md-12 mar_25_0">
+                    <a class="inside icon std-size" (click)="tagProduct()"><img class="inside" src="/public/Icons/basket.png" height="22">{{tagProductTitle}}</a>
+                </div>
+                <div class="inside form-group frm-grp col-md-12 mar_25_0">
+                    <a class="inside icon std-size" (click)="tagTitle(2)"><img src="/public/Icons/tag.png" height="22" class="inside"> {{tagTitle2}}</a>
+                </div>
+                <div class="form-group frm-grp col-md-12 mar_25_0">
+                    <a class="icon std-size" (click)="addSponsoredLocation()"><img src="/public/Icons/pointer.png" height="22"> Add Location</a>
+
+                </div>
+                <div class="form-group frm-grp col-md-12" [hidden]="sponsoredLocation">
+                    <input id="pac-input2" class="form-control" type="text" placeholder="Enter a location">
+                </div>
+        
+                <div class="form-group frm-grp col-md-12">
+                    <span [hidden]="error" class="col-xs-12 zero_padding error_show alert-danger" >{{msg}}</span>
+                    <span [hidden]="success" class="col-xs-12 zero_padding error_show alert-success">{{msg}}</span>
+                </div>
+                <div class="form-group frm-grp col-md-12">
+                    <button type="button" class="btn btn-default pro-btn btn_height" (click)=createPost($event,2)>POST</button>
+                </div>
+            </form>
+        </div>
+        <div id="product" class="tab-pane fade">
+            <form [formGroup]="productForm">
+                <div class="form-group frm-grp col-md-12">
+                    <textarea  [(ngModel)]="productForm.postCaption" name="postCaption" class="form-control" rows="5" id="comment"
+                        placeholder="Write a caption..."></textarea>
+                </div>
+                <div class="form-group frm-grp col-md-12">
+                    <input  type="text" [(ngModel)]="productForm.productName" name="productName" class="form-control"  placeholder="Product Name">
+                </div>
+                <div class="form-group frm-grp col-md-12">
+                    <input  type="number" [(ngModel)]="productForm.price" name="price" class="form-control" placeholder="Price">
+                </div>
+               
+                <div class="form-group frm-grp col-md-12">
+                    <input  type="url" [(ngModel)]="productForm.productUrl"  #productUrl  (keyup.enter)="chkUrlValid(productUrl.value);" (blur)="chkUrlValid(productUrl.value)" name="productUrl" class="form-control" placeholder="Link">
+                     <span [hidden]="error_url" class="col-xs-12 zero_padding error_show alert-danger">Url should be valid. Ex:https://merriment.io/</span>
+                </div>
+                <div class="form-group frm-grp col-md-12">
+                   <select  [(ngModel)]="productForm.buttonLabel" name="buttonLabel" class="form-control">
+                    <option value=''>Button Label</option>
+                     <option value='BUY'>BUY</option>
+                     <option value='ON SALE'>ON SALE</option>
+                     <option value='SIGN UP'>SIGN UP</option>
+                     <option value='GET APP'>GET APP</option>
+                      <option value='MORE INFO'>MORE INFO</option>
+                </select>
+                </div>
+    
+                 <div class="form-group frm-grp col-md-12" *ngIf="selectedCatArr.length>0">
+                  <span class="catTag crsr-ptr" *ngFor="let cat of selectedCatArr; let i=index">
+                      {{cat}}  <span (click)="removeCat(i)">×</span>
+                  </span>
+                </div>
+                <div class="form-group frm-grp col-md-12 drp" >
+                    <input  type="text" class="form-control " autocomplete="off" aria-autocomplete="off" [(ngModel)]="productForm.category" name="category" placeholder="Type category then press enter"
+                    #category (keyup)="filterCatgory(category.value)"  id="catId" (keyup.enter)="selectedCategoryFun(category.value);" (blur)="blursearch()"
+                    (click)="searchopen()">
+ 
+                        <div>
+                            <ul class="serarch_dropdown zero_padding tagDrop catTagSearchDrop" *ngIf="catLen>0 && sugestionShow">
+                                <div class="profilename_comment drop_down_list ht_50_pad_2p aaa" tabindex="0"  *ngFor="let item of catData" (click)="selectedCategoryFun(item);" (keyup.enter)="selectedCategoryFun(item);">
+                                <span class="name_comment zero_padding col-xs-10 text-left crsr-ptr">
+                                    <h5 class="color_thick member_name zero_padding" >{{item.name}}</h5>                             
+                                </span>
+                                </div>
+                                <div class="profilename_comment drop_down_list col-xs-12 zero_padding" *ngIf="catData.length == 0">
+                                    <span class="color_opacity">No results found.</span>
+                                </div>
+                            </ul> 
+                        </div>
+                </div>
+                <div class="inside form-group frm-grp col-md-12 mar_25_0">
+                    <a class="inside icon std-size" (click)="tagTitle(3)"><img src="/public/Icons/tag.png" height="22" class="inside"> {{tagTitle3}}</a>
+                </div>
+                <div class="form-group frm-grp col-md-12 mar_25_0">
+                    <a class="icon std-size" (click)="addProductLocation()"><img src="/public/Icons/pointer.png" height="22"> Add Location</a>
+                </div>
+                <div class="form-group frm-grp col-md-12" [hidden]="productLocation">
+                    <input id="pac-input3" class="form-control" type="text" placeholder="Enter a location">
+                </div>
+                <div class="form-group frm-grp col-md-12">
+                    <span [hidden]="error" class="col-xs-12 zero_padding error_show alert-danger">{{msg}}</span>
+                    <span [hidden]="success" class="col-xs-12 zero_padding error_show alert-success">{{msg}}</span>
+                </div>
+                <div class="form-group frm-grp col-md-12">
+                    <button type="button" class="btn btn-default pro-btn btn_height" (click)=createPost($event,3)>POST</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</html>

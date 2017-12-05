@@ -1,0 +1,636 @@
+import {Component} from '@angular/core';
+import { ROUTER_DIRECTIVES } from '@angular/router';
+import { Router, ActivatedRoute  } from '@angular/router';
+import {personService} from '../person/person.service';
+import { Observable } from 'rxjs/Observable';
+import {HeaderComponent} from '../../header/header.component';
+declare const jQuery: any;
+
+@Component({
+    selector: 'person',
+    templateUrl: '/person.component.html',
+    directives: [ROUTER_DIRECTIVES, HeaderComponent],
+    providers: [personService]
+})
+
+export class PersonComponent {
+
+
+    private name: string;
+    private data: any;
+    private posts: any = [];
+
+    private loading = true;
+    private buffer = false;
+    username: any;
+    commnentdetails: any = [];
+    submitComment:any;
+
+    constructor(private _personService: personService, private _router: Router, private route: ActivatedRoute) {
+        
+    }
+
+    private offset = 0;
+    private loadmoree: any;
+    private data1: any;
+    private data2: any;
+    private privatemember: any;
+    totaldata: any;
+    commentdata: any;
+    persondata = false;
+    personnodata =false;
+    ngOnInit() {
+
+         jQuery(window).on('popstate', function() { 
+            jQuery(".modal").modal('hide');
+        });
+        jQuery(".modal").on("shown.bs.modal", function()  { 
+             alert('inside backdrop')
+            var urlReplace = "#" + jQuery(this).attr('id'); 
+            history.pushState(null, null, urlReplace); 
+           
+        });
+
+        jQuery(".modal-backdrop").css({ "display": "none" });
+        var username = localStorage.getItem('username');
+        this.username = username;
+        this.route.params.subscribe(params => {
+            this.name = params['name'];
+            console.log(this.name);
+            this.loading = true;
+            this._personService.personprofile(this.name)
+                .subscribe((res) => {
+                    if(res.code == 1800){
+                      this.persondata = false;
+                      this.personnodata =true;
+                    }
+                     if(res.code == 200){
+                        this.persondata = true;
+                        this.personnodata =false;
+                        this.loading = false;
+                        this.data = res.memberProfileData[0];                        
+                        // console.log(this.privatemember);
+                        // this.posts = res.memberPostsData;
+                        /** bio add tag**/
+                        var biotext = this.data.bio;
+                        if(biotext){
+                            var hashtag_regexp = /#([a-zA-Z0-9_]+)/g;
+                            var bio_detail = biotext.replace(
+                                    hashtag_regexp,
+                                    '<a href="caption/$1" class="hashtag member_name biohashtag">#$1</a>' 
+                                );                            
+                            var hashtag_regexpp = /@([a-zA-Z0-9_]+)/g;                
+                            var bio_detaill = bio_detail.replace(
+                                hashtag_regexpp,
+                                '<a href="$1" class="hashtag member_name biohashtag">@$1</a>' 
+                            );
+                        }
+                        this.data.bio =bio_detaill;
+                        this.privatemember = this.data.privateMember
+
+                        this.posts=[];
+                        this.totaldata = res.memberPostsData;
+                        this.offset = res.memberPostsData.length;
+
+                        this.commentfunction();
+
+                        if (this.offset >= 20)
+                            this.loadmoree = true;
+                     }
+                });
+            this._personService.memberFollowing(this.name)
+                .subscribe((res) => {
+                    this.data1 = res.following;
+                    this.loading = false;
+                });
+
+            this._personService.memberFollowers(this.name)
+                .subscribe((res) => {
+                    this.data2 = res.memberFollowers;
+                    this.loading = false;
+                });
+        });
+        jQuery(document).keyup(function (e: any) {
+
+            if (e.keyCode == 27) {
+                jQuery(".modal").css({ "display": "none" });
+                jQuery(".modal-backdrop").css({ "display": "none" });
+            }
+        });
+    }
+
+    hashtagFunction(){
+        var len = this.totaldata.length;
+         for (var i = 0; i < len; i++) {
+             if (this.totaldata[i].commentData) {
+             var commenttext = this.totaldata[i].commentData;
+              for (var x = 0; x < commenttext.length; x++) {
+                    // commenttext.splice(x, 0);
+                    if (this.totaldata[i].commentData[x].commentBody) {
+                        var postCommentNodeArr1 = commenttext[x].commentBody;
+                        // console.log(postCommentNodeArr1);
+                        var hashtag_regexp = /#([a-zA-Z0-9_]+)/g;
+                        var comment_text = postCommentNodeArr1.replace(
+                            hashtag_regexp,
+                            '<a href="caption/$1" class="hashtag member_name biohashtag">#$1</a>'
+                        );
+                        var hashtag_regexp1 = /@([a-zA-Z0-9_]+)/g;
+                        var comment_textt = comment_text.replace(
+                            hashtag_regexp1,
+                            '<a href="$1" class="hashtag member_name biohashtag">@$1</a>'
+                        );                   
+                        this.totaldata[i].commentData[x].commentBody = comment_textt; 
+                    }                   
+                }
+            }
+         }
+    }
+
+
+    commentfunction() {
+        
+        this.hashtagFunction(); 
+        // alert("hi");
+        // this.posts=[];
+        var len = this.totaldata.length;        
+        for (var i = 0; i < len; i++) {
+            // this.commentdata = [];
+            // if (this.totaldata[i].comments) {
+
+            //     var commenttext = this.totaldata[i].comments;
+            //     var hashtag_regexp = /#([a-zA-Z0-9_]+)/g;
+            //     var comment_text = commenttext.replace(
+            //         hashtag_regexp,
+            //         '<a href="personcaption/$1" class="hashtag member_name biohashtag">#$1</a>'
+            //     );
+
+            //     var hashtag_regexp1 = /@([a-zA-Z0-9_]+)/g;
+            //     var comment_textt = comment_text.replace(
+            //         hashtag_regexp1,
+            //         '<a href="person/$1" class="hashtag member_name biohashtag">@$1</a>'
+            //     );
+
+            //     var postCommentNodeArr = comment_textt.split('^^');
+            //     for (var x = 0; x < postCommentNodeArr.length; x++) {
+            //         postCommentNodeArr.splice(x, 0);
+            //         var postCommentNodeArr1 = postCommentNodeArr[x].split('$$');
+            //         if (postCommentNodeArr1.length == 2)
+            //             this.commentdata.push(postCommentNodeArr1);
+            //     }
+            // }
+            // this.totaldata[i].comments = this.commentdata;
+
+            var postCaption: any = [];
+            if (this.totaldata[i].postCaption) {
+                var postCaptionn = this.totaldata[i].postCaption.split(' ');
+                this.totaldata[i].postCaption = postCaptionn;
+            }
+
+            var postLikedBy: any = [];
+            if (this.totaldata[i].postLikedBy) {
+                var liked = this.totaldata[i].postLikedBy.split(',');
+                if (liked.length) {
+                    this.totaldata[i].postLikedBy = liked;
+                }
+            } else {
+                this.totaldata[i].postLikedBy = [];
+            }
+
+             var usersTagged: any = [];
+            if (this.totaldata[i].usersTagged) {
+                usersTagged = this.totaldata[i].usersTagged.split(',');
+                this.totaldata[i].usersTagged = usersTagged;
+            }
+
+            var taggedUserCoordinates: any = [];
+            if (this.totaldata[i].taggedUserCoordinates) {
+                taggedUserCoordinates = this.totaldata[i].taggedUserCoordinates.split(',');
+                this.totaldata[i].taggedUserCoordinates = taggedUserCoordinates;
+            }
+
+            if (usersTagged[0] !='undefined' && taggedUserCoordinates[0] !=null) {
+                var lenn = usersTagged.length;
+                var tagsCords: any = [];
+                for (var j = 0; j < lenn; j++) {
+                    var userCords = {
+                        name: usersTagged[j],
+                        right: 0,
+                        top: 0
+                    };
+                     if(taggedUserCoordinates[j]){
+                        var cordinates = taggedUserCoordinates[j].split('-');
+                        userCords.right = cordinates[0];
+                        userCords.top = cordinates[1];
+
+                        tagsCords.push(userCords);
+                     }
+                }
+                this.totaldata[i].coords = tagsCords;
+            }
+
+            var post = this.totaldata[i].postedOn;
+            var poston = Number(post);
+            var postdate = new Date(poston);
+            var currentdate = new Date();
+            var timeDiff = Math.abs(postdate.getTime() - currentdate.getTime());
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            var diffHrs = Math.round((timeDiff % 86400000) / 3600000);
+            var diffMins = Math.round(((timeDiff % 86400000) % 3600000) / 60000);
+
+            if (1 < diffDays) {
+                this.totaldata[i].postedOn = diffDays + "d";
+            } else if (1 <= diffHrs) {
+                this.totaldata[i].postedOn = diffHrs + "h";
+            } else {
+                this.totaldata[i].postedOn = diffMins + "m";
+            }
+
+            this.posts.push(this.totaldata[i]);
+        }
+        // this.posts = this.totaldata;
+    }
+
+
+    loadmore() {
+        // console.log(this.offset, this.name);
+        this.offset = this.posts.length;
+        this._personService.loadmore(this.offset, this.name)
+            .subscribe((res) => {
+                // var len = res.memberPostsData.length;
+                // for (var i = 0; i < len; i++) {
+                //     this.posts.push(res.memberPostsData[i]);
+                // }
+
+                this.totaldata = res.memberPostsData;
+                this.commentfunction();
+
+                this.offset = res.memberPostsData.length || 0;
+                if (this.offset >= 20)
+                    this.loadmoree = true;
+                else
+                    this.loadmoree = false;
+            });
+    }
+
+    timepost(item: any) {
+        var postsId = item.postId;
+        var followingUsername = this.name;
+        let link = ['', followingUsername, postsId];
+        this._router.navigate(link);
+    }
+
+    usertagged(i: any) {
+        this.posts[i].usertaggedFlagg = true;
+    }
+    falseusertagged(i:any){
+        this.posts[i].usertaggedFlagg = false; 
+    }
+
+    usertaggedname(tagged: any): void {
+        // alert(item.postId);
+        var personname = tagged.name;
+        var username = localStorage.getItem('username');
+        if (username == personname) {
+            this._router.navigate(['profile']);
+        }
+        else {
+            let link = ['', personname];
+            this._router.navigate(link);
+        }
+    }
+
+    activeitem(id: any) {
+        // alert(id);
+        // let link = ['', this.name, id];
+        // this._router.navigate(link);
+        if (history.pushState) {
+            var newurl = window.location.protocol + "//" + window.location.host + window.location.pathname + '/'+id;
+            window.history.pushState({path:newurl},'',newurl);
+        }
+        jQuery('.item').removeClass("active");
+        jQuery('#' + id + 'w').addClass("active");
+
+    }
+
+    memberprofile(item: any): void {
+        // alert(item.postsId);
+        var personname = item.username;
+        var username = localStorage.getItem('username');
+        if (username == personname) {
+            this._router.navigate(['profile']);
+        }
+        else {
+            let link = ['', personname];
+            this._router.navigate(link);
+        }
+        // let link = ['/person', item.username];
+        // this._router.navigate(link);
+    }
+    memberprofilee(comment: any): void {
+        // alert(item.postsId);
+        var personname = comment.commentedByUser;
+        var username = localStorage.getItem('username');
+        if (username == personname) {
+            this._router.navigate(['profile']);
+        }
+        else {
+            let link = ['', personname];
+            this._router.navigate(link);
+        }
+        // let link = ['person', comment[0]];
+        // this._router.navigate(link);
+    }
+
+    membercaption(caption: any): void {
+        var hashtagname = caption.split('#');
+        //   console.log(hashtagname[1]);        
+        let link = ['caption', hashtagname[1]];
+        this._router.navigate(link);
+    }
+
+    membercaptionn(comment: any): void {
+        var hashtagname = comment[1].split('#');
+        //   console.log(hashtagname[1]);        
+        let link = ['caption', hashtagname[1].replace(" ", "")];
+        this._router.navigate(link);
+
+    }
+
+    memberprofilecaption(comment: any): void {
+        // var hashtagname = comment[1].split('@');
+        //   console.log(hashtagname[1]);        
+        // let link = ['personcaption', hashtagname[1].replace(" ","")];
+        // this._router.navigate(link); 
+
+        var personname = comment[1].split('@');
+        var username = localStorage.getItem('username');
+        if (username == personname[1]) {
+            this._router.navigate(['profile']);
+        }
+        else {
+            let link = ['', personname[1].replace(" ", "")];
+            this._router.navigate(link);
+        }
+
+    }
+
+    memberprofilecaptionn(caption: any): void {
+        var personname = caption.split('@');
+        var username = localStorage.getItem('username');
+        if (username == personname[1]) {
+            this._router.navigate(['profile']);
+        }
+        else {
+            let link = ['', personname[1].replace(" ", "")];
+            this._router.navigate(link);
+        }
+
+    }
+
+    commentdelete(comment: any, id: any, postsType: any, i: number, k: number): void {
+        //  console.log(comment[0]+" ss "+comment[1]+" id "+id+" postsType "+postsType+" i "+i);
+        postsType = postsType.toString();
+        this.commnentdetails = ({ username: comment.commentedByUser, message: comment.commentBody, commentId: comment.commentId, id: id, postsType: postsType, i: i, k: k });
+    }
+
+    commentmodaldelete(): void {
+        //  console.log(this.commnentdetails);            
+        var commentlist = this.commnentdetails;
+        var commenttext = commentlist.message;
+
+        var hashtag_regexp = /<a[^>]*>([^<]+)<\/a>/g;
+        var comment_text = commenttext.replace(hashtag_regexp, '$1');
+        // console.log({ comment_text: comment_text });
+       
+        // console.log(this.posts[commentlist.i].comments[commentlist.k]);     
+        this.posts[commentlist.i].commentData.splice([commentlist.k], 1);
+        this._personService.userdeletecomment({username: commentlist.username, message: comment_text, commentId: commentlist.commentId, id: commentlist.id, postsType: commentlist.postsType })
+            .subscribe();
+    }
+
+    likeStatus(liked: any): void {
+        var personname = liked;
+        // alert(personname);
+        var username = localStorage.getItem('username');
+        if (username == personname) {
+            this._router.navigate(['profile']);
+        }
+        else {
+            let link = ['', personname];
+            this._router.navigate(link);
+        }
+    }
+
+    likedoubleClick(id: any, postsType: any, i: number) {
+        // alert(id+'aa'+'bb'+postsType+'cc'+i);
+        if (this.posts[i].likeStatus == 0) {
+            this.posts[i].likeheartFlagg = true;
+            var username = localStorage.getItem('username');
+            this.posts[i].postLikedBy.unshift(username);
+            this.posts[i].likeStatus = 1;
+            this.posts[i].likes += 1;
+            this._personService.userlike(id, postsType)
+                .subscribe();
+            setTimeout(() => {
+                this.posts[i].likeheartFlagg = false;
+            }, 500);
+        }
+    }
+
+    likeactive(id: any, postsType: any, i: number) {
+        // alert(id);
+        var username = localStorage.getItem('username');
+        this.posts[i].postLikedBy.unshift(username);
+        this.posts[i].likeStatus = 1;
+        this.posts[i].likes += 1;
+        this._personService.userlike(id, postsType)
+            .subscribe();
+    }
+    likedeactive(id: any, postsType: any, i: number) {
+        var username = localStorage.getItem('username');
+        var array = this.posts[i].postLikedBy;
+        var index = array.indexOf(username);
+        if (index > -1) {
+            array.splice(index, 1);
+        }
+        this.posts[i].likeStatus = 0;
+        this.posts[i].likes -= 1;
+        this._personService.userunlike(id, postsType)
+            .subscribe();
+
+    }
+
+    following(item: any, i: number) {
+        // alert(i+'ll'+username+'ff'+followFlag);
+        var username = item.username;
+        var memberPrivateFlag = item.memberPrivateFlag;
+        this.data2[i].loaderFlag = true;
+        if(memberPrivateFlag == 1){
+            setTimeout(() => {
+                this.data2[i].userFollowRequestStatus = 0;
+            }, 500);
+            this._personService.following(username)
+                .subscribe();
+            setTimeout(() => {
+                this.data2[i].loaderFlag = false;
+            }, 500);
+        }
+        if(memberPrivateFlag != 1){
+            setTimeout(() => {
+                this.data2[i].userFollowRequestStatus = 1;
+            }, 500);
+            this._personService.following(username)
+                .subscribe();
+            setTimeout(() => {
+                this.data2[i].loaderFlag = false;
+            }, 500);
+        }
+    }
+
+    follow(item: any, i: number) {
+        var username = item.username;
+        this.data2[i].loaderFlag = true;
+        setTimeout(() => {
+            this.data2[i].userFollowRequestStatus = null;
+        }, 500);
+        this._personService.follow(username)
+            .subscribe();
+        setTimeout(() => {
+            this.data2[i].loaderFlag = false;
+        }, 500);
+    }
+
+    followingflag(item: any, i: number) {
+        var username = item.username;
+         var memberPrivateFlag = item.memberPrivateFlag;
+        // alert(i+'ll'+username+'ff'+followFlag);
+        this.data1[i].loaderFlag = true;
+        if(memberPrivateFlag == 1){
+            setTimeout(() => {
+                this.data1[i].userFollowRequestStatus = 0;
+            }, 500);
+            this._personService.following(username)
+                .subscribe();
+            setTimeout(() => {
+                this.data1[i].loaderFlag = false;
+            }, 500);
+        }
+        if(memberPrivateFlag != 1){
+            setTimeout(() => {
+                this.data1[i].userFollowRequestStatus = 1;
+            }, 500);
+            this._personService.following(username)
+                .subscribe();
+            setTimeout(() => {
+                this.data1[i].loaderFlag = false;
+            }, 500);
+        }
+        
+    }
+
+    followflag(item: any, i: number) {
+        var username = item.username;
+        this.data1[i].loaderFlag = true;
+        setTimeout(() => {
+            this.data1[i].userFollowRequestStatus = null;
+        }, 500);
+        this._personService.follow(username)
+            .subscribe();
+        setTimeout(() => {
+            this.data1[i].loaderFlag = false;
+        }, 500);
+    }
+
+    followingfllag(name: any, i: number) {
+        // alert(i+'ll'+username+'ff'+followFlag);
+        // console.log(this.privatemember);
+        this.buffer = true;
+        if (this.privatemember == 1) {
+            setTimeout(() => {
+                this.data.userFollowRequestStatus = 0;
+            }, 500);
+            this._personService.privateprofile(name, this.privatemember)
+                .subscribe();
+            setTimeout(() => {
+                this.buffer = false;
+            }, 500);
+        }
+        if (this.privatemember != 1) {
+            setTimeout(() => {
+                this.data.userFollowRequestStatus = 1;
+            }, 500);
+            this._personService.following(name)
+                .subscribe();
+            setTimeout(() => {
+                this.buffer = false;
+            }, 500);
+        }
+
+    }
+
+    followfllag(name: any, i: number) {
+        this.buffer = true;
+        setTimeout(() => {
+            this.data.userFollowRequestStatus = null;
+        }, 500);
+        this._personService.follow(name)
+            .subscribe();
+        setTimeout(() => {
+            this.buffer = false;
+        }, 500);
+
+    }
+
+    usercommentSubmit(value: any, id: any, postsType: any, i: number) {
+        // console.log('you submitted value:', value, id, postsType, i);
+        postsType = postsType.toString();
+        var username = localStorage.getItem('username');
+
+        var commenttext = value;
+        var hashtag_regexp = /#([a-zA-Z0-9_]+)/g;
+        var comment_text = commenttext.replace(
+            hashtag_regexp,
+            '<a href="caption/$1" class="hashtag member_name biohashtag">#$1</a>'
+        );
+        var hashtag_regexp1 = /@([a-zA-Z0-9_]+)/g;
+        var comment_textt = comment_text.replace(
+            hashtag_regexp1,
+            '<a href="$1" class="hashtag member_name biohashtag">@$1</a>'
+        );
+        if(value.length > 0){
+            // this.posts[i].comments.push([username, comment_textt]);
+
+            this._personService.usercomment({ message: value, id: id, postsType: postsType })
+                .subscribe((res) => {
+                this.submitComment = res.data; 
+                this.posts[i].commentData.push(this.submitComment[0].commentData[0]);
+                this.hashtagFunction(); 
+            });
+        }
+    }
+
+    left() {
+        var strid = jQuery('.item.active').attr("id")
+        var id = strid.substr(0, strid.length -1)
+        console.log(id)
+        if (history.pushState) {
+            var str = window.location.pathname;
+            var newurl = window.location.protocol + "//" + window.location.host + '/' + str.split('/')[1] + '/' + id;      
+            window.history.pushState({path:newurl},'',newurl);
+        }
+    }
+
+    right() {
+        var strid = jQuery('.item.active').attr("id")
+        var id = strid.substr(0, strid.length -1)
+        console.log(id)
+        if (history.pushState) {
+            var str = window.location.pathname;
+            var newurl = window.location.protocol + "//" + window.location.host + '/' + str.split('/')[1] + '/' + id;      
+            window.history.pushState({path:newurl},'',newurl);
+        }
+    }
+
+    
+
+}

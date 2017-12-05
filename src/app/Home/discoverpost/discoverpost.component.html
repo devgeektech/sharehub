@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Merriment - Find your happy place</title>
+    <link rel="icon" type="image/gif/png" href="/app/public/images/picoTitleLogo.png">
+</head>
+<header></header>
+<div class="loader" *ngIf="loading"></div>
+
+<div class="container-fluid picogram_total padding-top-container" *ngIf="data">
+	<div class="container pico_content_total discoverPostContainer" *ngIf="data.length != 0">
+		<div class="col-xs-12 zero_padding text-center m_tp_10_2p">
+            <span class="emptydiscover homediscover_icon"></span>
+            <h4 class=""> Welcome to Merriment! </h4>
+			<h5 class=" color_opacity">Follow accounts to see photos in your feed.</h5>
+        </div>
+		<div class="follow_details suggestion zero_padding col-xs-12">
+			<h2 class="for_u_suggestion zero_padding col-xs-12">SUGGESTIONS FOR YOU</h2>
+		</div>
+
+		<div class="pico_contentdetails zero_padding col-xs-12 discoverPostInnerContainer" *ngFor="let item of data; let i = index">
+			<div class="pico_contentdetailss_name follow_details zero_padding col-xs-12 brdr_btm_none">
+		
+				<span class="col-xs-12 col-sm-12 zero_padding">
+				<div class="dis_inline pad-lft-0">
+											 <div *ngIf="item.profilePicUrl!='profilePicUrl' && item.profilePicUrl!='defaultUrl'"class="suggestion_image member_name pro_img_30 sg_pro_img_bg crsr-ptr"  (click)="memberprofile()"   [style.background]="'url('+checkImgURL(item.profilePicUrl)+ ')'"  [style.background-size]="'cover'" [style.background-position]="'center'" [style.background-repeat]="'no-repeat'">
+				                           </div>
+										    <div *ngIf="item.profilePicUrl=='profilePicUrl' || item.profilePicUrl=='defaultUrl'"class="suggestion_image member_name pro_img_30 sg_pro_img_bg crsr-ptr"  (click)="memberprofile()">
+				                           </div>
+											</div>
+											<div class="dis_inline">
+					<h5 class="follow_name1 zero_padding col-xs-12 txt_capt"><a class="color_thick member_name" (click)="memberprofile(item.postedByUserName)" id="{{item.postsId}}">{{item.postedByUserName}}</a></h5>
+					<h5 class="follow_name col-xs-12 zero_padding color_thick color_opacity small_size">{{item.postedByUserFullName}}</h5>
+											</div>
+													<div class="f-right">
+												<span class="bufferdiscover_gif"  *ngIf="item.loaderFlag==true" id="{{i}}"><img src="/public/images/ajax-loader2.gif" alt="loader"></span>
+										     	<span class="zero_padding text-center" *ngIf="item.followsFlag==0"(click)="following(item.postedByUserName, i);">
+									        	<button class="follow_button small_size">Follow</button>
+								        	</span>
+								         	<span class="zero_padding text-center" *ngIf="item.followsFlag==2" (click)="follow(item.postedByUserName, i);"><button class="follow_button small_size rqsted">Requested</button></span>
+								          	<span class="zero_padding text-center" *ngIf="item.followsFlag==1" (click)="follow(item.postedByUserName, i);"><button class="follow_button folow small_size m-top-0">Following</button></span>
+											</div>
+				</span>
+			</div>
+			<!--<h1>{{item.likes}}  hi</h1>-->
+			<div class="discover_image zero_padding col-xs-12 upload_photo pad-left pad-right pad_btm" *ngIf="item.privateProfile != 1">
+				<span class=" zero_padding" *ngFor="let user of item.postData">
+				   <div class="square_thumb" *ngIf="user.postsType==0 && item.thumbnailImageUrl !='undefined'"  [style.background]="'url('+user.thumbnailImageUrl+ ')'"  [style.background-size]="'cover'" [style.background-position]="'center'" [style.background-repeat]="'no-repeat'"></div>
+				    <div class="square_thumb" *ngIf="user.postsType==0 && item.thumbnailImageUrl =='undefined'"  [style.background]="'url('+user.mainUrl+ ')'"  [style.background-size]="'cover'" [style.background-position]="'center'" [style.background-repeat]="'no-repeat'"></div>
+					<span class="videotag_img video_tag" *ngIf="user.postsType==1"></span>
+					<video class="uploadphoto" *ngIf="user.postsType==1" controls>
+						<source src="{{user.mainUrl}}" type="video/mp4">
+						<source src="{{user.mainUrl}}" type="video/ogg"> 
+					</video>
+				</span>
+			</div>
+			<div class="discover_image zero_padding col-xs-12 upload_photo text-center" *ngIf="item.privateProfile == 1" >
+				<h4 class="m_b_2p;">This Account is Private</h4>
+				<h5>Follow to see their photos</h5>
+			</div>
+			
+		</div>	
+	</div>
+
+
+			<div class="col-xs-12 loader_moreDetails" [hidden]="!loadmoree">
+			<div
+			infinite-scroll
+		    [infiniteScrollDistance]="2"
+		    [infiniteScrollThrottle]="500"
+		    (scrolled)="loadmore()"> 
+			</div>
+			
+			 <span class="lodingMoreData_gif" [hidden]="loadingmoreeLoder"><img src="/public/images/ajax-loader2.gif" alt="loader"></span>
+		</div>
+</div>
+
+<div class="" *ngIf="data">
+	<div class="container pico_content_total text-center" *ngIf="data.length == 0 || !data && !loading" >		
+		<h4 style="margin-top:20%;">No posts yet.</h4>
+	</div>
+</div>
+
+</html>

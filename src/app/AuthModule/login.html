@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Merriment - Find your happy place</title>
+    <link rel="icon" type="image/gif/png" href="/public/images/picoTitleLogo.png">
+    <style>
+        #example1 {
+            margin: 0 0 100px 63px;
+        }
+        @media (min-width:521px) and (max-width:991px) {
+            #example1 {
+                margin: 0 0 120px 100px;
+            }
+        }
+        @media (min-width:521px) and (max-width:991px) {
+            #example1 {
+                margin: 0 0 120px 100px;
+            }
+        }
+        @media only screen and (max-width:520px){
+            #example1 {
+                margin: 0 0 100px 55px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid picogram_total">
+        <div class="container landing_login_signup login_mobile_imgg" style="">
+            <div class="col-xs-12 hidden-xs hidden-sm col-sm-6 col-md-6 zero_padding mobile_image">
+                <div id="carouselHacked" class="carousel slide carousel-fade" data-ride="carousel">
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner" role="listbox">
+                        <div class="item active">
+                            <img class="change_image img-responsive" src="/public/images/picoslide1.jpg">
+                        </div>
+                        <div class="item">
+                            <img class="change_image img-responsive" src="/public/images/picoslide2.jpg">
+                        </div>
+                        <div class="item">
+                            <img class="change_image img-responsive" src="/public/images/picoslide3.jpg">
+                        </div>
+                        <div class="item">
+                            <img class="change_image img-responsive" src="/public/images/picoslide4.jpg">
+                        </div>
+                        <div class="item">
+                            <img class="change_image img-responsive" src="/public/images/picoslide5.jpg">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6 zero_padding login_mobile_img" style="text-align:center;">
+                <div class="login_pico_logo col-xs-12 col-sm-12 zero_padding">
+                    <span class=""><img src="/public/images/pico_logo_new.png" height="30" alt="Merriment"></span>
+                    <!--<span class=""><img class="title_image" src="" alt="picogram"></span>-->
+
+                </div>
+                <div class="col-xs-12 col-sm-12 zero_padding signup_form_total hidedetails" [hidden]="hideElement" *ngIf="!displayLogin">
+                    <div class="col-xs-12 zero_padding signup_form">
+                        <h2 class="col-xs-12 color_thick zero_padding" style="color:#999">Sign up to see photos and videos from your friends.</h2>
+                    </div>
+                    <div class="col-xs-12 zero_padding signup_form">
+                        <span class="col-xs-12 zero_padding"><i class="facebook_icon_landing"></i>
+                    <span class="bufferlogin_gif loaderFb" *ngIf="buffer_login"><img src="/public/images/ajax-loader2.gif" alt="loader"></span>
+                        <button class="landing_click col-xs-12 zero_padding btn_height" (click)="onFacebookLoginClick()">Log in with Facebook</button>
+                        </span>
+
+                       <h5 class="text-danger fberror" style="display:none;"> No User Found! </h5>
+                    </div>
+                    <div class="col-xs-12 zero_padding signup_form">
+                        <span class="col-xs-5 zero_padding left_border"></span>
+                        <span class="col-xs-2 zero_padding" style="color:#999">OR</span>
+                        <span class="col-xs-5 zero_padding right_border"></span>
+                    </div>
+                    
+
+
+                    <form [formGroup]="signupForm" (submit)="signupUser()">
+                        <div class="col-xs-12 zero_padding signup_form">
+                            <span class=""><input type="text" [(ngModel)]="email" name="email" id="email" value="" class="sign_validation form-control color_thick color_opacity" placeholder="Email"><i class="icon_err_right"></i></span>
+                            <!--<control-messages [control]="signupForm.controls.email"></control-messages> -->
+                            <div *ngIf="error_icon" class="icon_err_right error"></div>
+
+                        </div>
+                        <div class="col-xs-12 zero_padding signup_form">
+                            <span class=""><input type="text" id="fullName" [(ngModel)]="fullName" name="fullName" (click)="registerUser()" value="" id="fullname_register" class="fullname_register form-control color_thick color_opacity" placeholder="Full Name"><i class="icon_err_right"></i></span>
+
+                        </div>
+                        <div class="col-xs-12 zero_padding signup_form">
+                            <span class=""><input type="text" [(ngModel)]="username" name="username" (click)="registerUser()" id="username" value="" class="sign_validation1 form-control color_thick color_opacity" placeholder="Username" style="text-transform: lowercase;"><i class="icon_err_right"></i></span>
+                            <!--<control-messages [control]="signupForm.controls.username"></control-messages>-->
+                            <div *ngIf="error_icon" class="icon_err_right error"></div>
+                        </div>
+                        <div class="col-xs-12 zero_padding signup_form">
+                            <span class=""><input type="password" [(ngModel)]="password" name="password" (click)="registerUser()" id="password" value="" class="sign_validation2 form-control color_thick color_opacity" placeholder="Password"><i class="icon_err_right"></i></span>
+                          
+                        </div>
+                         <div class="col-xs-12 zero_padding signup_form">
+                            <span class=""><input type="text" [(ngModel)]="referer" name="referer"  id="referer" value="" class="form-control color_thick color_opacity" placeholder="Referer"><i class="icon_err_right"></i></span>
+                         </div>
+
+                        <div class="col-xs-12 zero_padding signup_form">
+                            <span class="bufferlogin_gif" *ngIf="bufferlogin"><img src="/public/images/ajax-loader2.gif" alt="loader"></span>
+                            <span class="col-xs-12 zero_padding"><button type="submit" (click) = "registerUsersubmit();" class="submitregister landing_click signup_click col-xs-12 zero_padding btn_height">Sign up</button></span>
+                            <span class="col-xs-12 zero_padding error_show" style="color:red;display:none;">This field is required.</span>
+                        </div>
+                        <div style="color:#FF5A5F" *ngIf="signupMessage">{{signupMessage}}</div>
+                        <div style="color:green" *ngIf="signupSuccess">{{signupSuccess}}</div>
+                        <div style="color:#FF5A5F" *ngIf="fbloginerror">{{fbloginerror}}</div>
+                    </form>
+                    <div class="col-xs-12 zero_padding signup_form terms_agree">
+                        <span class="col-xs-12 zero_padding privacy_terms">
+				  By signing up, you agree to our
+				  <a class="link_color" target="_blank" [routerLink]="['/terms']">Terms</a> & <a class="link_color" target="_blank" [routerLink]="['/privacy']">Privacy Policy</a>
+				</span>
+                    </div>
+                </div>
+                <div class="col-xs-12 zero_padding account_login_page showdetails" [hidden]="hideElement" *ngIf="displayLogin">
+                    <form [formGroup]="loginForm" (submit)="loginUser()">
+                        <div class="col-xs-12 zero_padding signup_form">
+                            <span class=""><input type="text" [(ngModel)]="username" name="username" id="username1" value="" class="sign_validation3 form-control color_thick color_opacity icon_err_right" placeholder="Username"><i class="icon_err_right"></i></span>
+                            <!--control-messages [control]="loginForm.controls.username"></control-messages>-->
+                        </div>
+                        <div class="col-xs-12 zero_padding signup_form">
+                            <span class=""><input type="password" [(ngModel)]="password" name="password" id="password1" value="" class="sign_validation4 form-control color_thick color_opacity icon_err_right" placeholder="Passsword"><i class="icon_err_right"></i></span>
+                            <span class="forget_password_pico" (click)="forgot()">Forgot?</span>
+                            <!--control-messages [control]="loginForm.controls.password"></control-messages>-->
+                        </div>
+                        <div id="example1"></div>
+                        <div class="col-xs-12 zero_padding signup_form">
+                            <span class="bufferlogin_gif" *ngIf="bufferlogin"><img src="/public/images/ajax-loader2.gif" alt="loader"></span>
+                            <span class="col-xs-12 zero_padding"><button [disabled]="!login_valid" type="submit" (click) = "authenticateUser();" class="landing_click login_click col-xs-12 zero_padding btn_height">Log in</button></span>
+                        </div>
+                        <div style="color:#FF5A5F" *ngIf="loginMessage">{{loginMessage}}</div>
+                        <!--<div style="color:green" *ngIf="loginSuccess">{{loginSuccess}}</div>-->
+                    </form>
+                </div>
+                
+                <div class="col-xs-12 zero_padding account_login_page" *ngIf="edited">
+                    <form [formGroup]="resetForm">
+                        <div class="col-xs-12 zero_padding signup_form">
+                            <span class="">
+                        <input type="text" [(ngModel)] = "email"  name="email" class="sign_validation3 form-control color_thick color_opacity icon_err_right" id="forgotemail" placeholder="Email">
+                        <i class="icon_err_right"></i>
+                        </span>
+                            <control-messages [control]="resetForm.controls.email"></control-messages>
+                        </div>
+                        <div class="col-xs-12 zero_padding signup_form">
+                            <span class="bufferlogin_gif" *ngIf="bufferlogin"><img src="/public/images/ajax-loader2.gif" alt="loader"></span>
+                            <span class="col-xs-12 zero_padding"><button type="submit" [disabled]="!resetForm.valid" (click) = "forgotPassword();" class="landing_click login_click col-xs-12 zero_padding btn_height">Reset Password</button></span>
+                        </div>
+                        
+                        <div style="color:green" *ngIf="resetSuccess">{{resetSuccess}}</div>
+                        <div style="color:#FF5A5F" *ngIf="reseterror">{{reseterror}}</div>
+                    </form>
+                </div>
+                    
+                <div class="col-xs-12 zero_padding login_signup">
+                    <div class="col-xs-12 zero_padding account_login hidedetails" *ngIf="!displayLogin">
+                        <h5 class="col-xs-12 zero_padding">Have an account? <span class="login click_login" (click)="login();">Log in</span></h5>
+                    </div>
+                    <div class="col-xs-12 zero_padding account_sigup showdetails" *ngIf="displayLogin">
+                        <h5 class="col-xs-12 zero_padding">Don't have an account? <span class="signup click_signup" (click)="register();">Sign up</span></h5>
+                    </div>
+                </div>
+                <!--<div class="col-xs-12 zero_padding get_the_app">
+                    <h6 class="col-xs-12">Get the app.</h6>
+                    <span class="col-xs-6 col-sm-5 col-sm-offset-1" style="padding:0px;"><img class="image_app" src="/public/images/appstore.png" alt="app store"></span>
+                    <span class="col-xs-6 col-sm-5" style="padding:0px;"><img class="image_app" src="/public/images/playstore.png" alt="google play store"></span>
+                </div>-->
+            </div>
+
+
+        </div>
+    </div>
+
+    <footer></footer>
+
+</body>
+
+</html>

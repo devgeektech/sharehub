@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{name}}</title>
+    <link rel="icon" type="image/gif/png" href="/public/images/picoTitleLogo.png">
+   
+</head>
+<header></header>
+<div class="loader" *ngIf="loading"></div>
+
+<div class="container-fluid picogram_total padding-top-container">
+	
+		<div class="container pico_content_total profile_pico pro_container text-center" *ngIf="!ownerRight">
+	<h2> Sorry, this page isn't available</h2>
+	<h5> The link you followed may be broken, or the page may have been removed. <a [routerLink]="['']">Go back to merriment.</a></h5>
+</div>
+    <div class="container pico_content_total profile_pico pro_container">
+        <div class="post_homepage" *ngIf="posts">
+            <!--<div class="not_login_user_section" *ngIf="sharePost">
+                <span (click)="sharePostlogin2('1')" class="">Sign Up</span> |
+                <span (click)="sharePostlogin2('0')" class="">Log In</span>
+            </div>-->
+        <div class="item col-xs-12 col-sm-8 col-sm-offset-2 home_post_container m-bottom-4p" *ngFor="let item of posts; let i = index">
+            <div class="col-xs-12 col-sm-12 zero_padding ">
+                <span class="">
+
+                <div class="follow_details col-xs-12 zero_padding pad_left_10 pad_tb_15 pad_15_rt" >
+                     <div class="dis_inline">
+						 <div class="suggestion_image member_name pro_img_30 sg_pro_img_bg crsr-ptr" (click)="memberprofile()"   [style.background]="'url('+checkImgURL(item.profilePicUrl)+ ')'"  [style.background-size]="'cover'" [style.background-position]="'center'" [style.background-repeat]="'no-repeat'">
+				       </div>
+                          <!--<img  class="suggestion_image member_name" (click)="memberprofile()" src="{{item.profilePicUrl}}"  onerror="this.src='/public/images/user.jpg'">-->
+                     </div>
+                       <div class="dis_inline" *ngIf="item.place =='null'">
+							<h3 class="follow_name zero_padding txt_capt"><span class="color_thick member_name txt_bold" (click)="memberprofile()">{{name}}</span></h3>
+											
+						</div>
+				        <div class="dis_inline m-top-10" *ngIf="item.place !='null'">
+							<div class="dis_inline zero_padding">
+									<h3 class="follow_name1 zero_padding col-xs-12 txt_capt"><a class="color_thick member_name txt_bold" (click)="memberprofile(item)" id="{{item.postId}}">{{name}}</a></h3>
+							</div>
+							<div class="dis_inline zero_padding pad-left">
+								 <h3 class="follow_name zero_padding txt_capt"><span class="color_thick member_name postedOn" (click)="timepost(item)">{{item.postedOn}}</span></h3>
+							</div>
+                            	<h6  class="follow_name col-xs-12 zero_padding color_thick color_opacity small_size isWider" (click)="goToPlace(item.place)">{{item.place}}</h6>
+                               <h6   class="follow_name col-xs-12 zero_padding color_thick color_opacity small_size isMobile" (click)="goToPlace(item.place)">{{item.place  | truncate : 30}}</h6>
+                        </div>
+                        <div class="dis_inline" *ngIf="item.place =='null'">
+                         <h3 class="follow_name zero_padding txt_capt"><span class="color_thick member_name postedOn" (click)="timepost(item)">{{item.postedOn}}</span></h3>
+                       </div>
+                    
+                     <!--<div class="add_comment modal_comment_carousel f-right">
+                   
+                    <i class="comment_icon comment_dotted_icon" ></i>
+                </div>-->
+                    <div *ngIf="name != username" class="f-right m_rt">
+					 <span class="gif_new" *ngIf="buffer"><img src="/public/images/ajax-loader2.gif" alt="loader"></span>
+                    <span class="zero_padding text-center" *ngIf="item.followStatus!=0 && item.followStatus!=1" (click)="followingfllag(name,i);" ><button class="follow_button small_size">Follow</button></span>
+                    <span class="zero_padding text-center" *ngIf="item.followStatus==0" (click)="followfllag(name,i);"><button class="follow_button small_size rqsted">Requested</button></span>
+                    <span class="zero_padding text-center" *ngIf="item.followStatus==1" (click)="followfllag(name,i);"><button class="follow_button folow small_size m-top-0">Following</button></span>
+                    </div>
+                   
+                </div>
+                </span>
+
+
+                <!--<img class="img-responsive" src="https://igcdn-photos-f-a.akamaihd.net/hphotos-ak-xpt1/t51.2885-15/e15/10809778_786506061406485_132431944_n.jpg?ig_cache_key=ODY1OTk3NTk4NzU0MjE4NDY5.2"
+                    alt="...">-->
+                    <img class="img-responsive col-xs-12 zero_padding" id="{{i}}" (click)="usertagged(i);" (dblclick)="likedoubleClick(item.postId, item.postsType,i);"  src="{{item.mainUrl}}">
+                    <div class="doubleclick_heart" *ngIf="item.likeheartFlagg==true"> 
+                        <span class="double_click_heart like_icon"></span>
+                    </div>
+                    <video class="img-responsive col-xs-12 zero_padding" (click)="usertagged(i);" *ngIf="item.postsType==1" controls>
+                        <source src="{{item.mainUrl}}" type="video/mp4">
+                        <source src="{{item.mainUrl}}" type="video/ogg"> 
+                    </video>
+        
+               	<div class="pico_contentdetails_tagged col-xs-12 tag_div_cont">
+					<div *ngIf="item.usertaggedFlagg==true">
+						<span *ngFor="let tagged of item.coords;">
+							<span *ngIf="tagged.isRight" class="tagg_color_name tagg_color" (click)="usertaggedname(tagged);"   [ngStyle]="{'right': '0px','margin-right': tagged.right+'px', 'margin-top': '-'+tagged.top+'px'}">															
+							  <div class="tagg_arrowicon rt_0"></div>
+								  {{tagged.name}}														
+							</span>
+							<span *ngIf="!tagged.isRight" class="tagg_color_name tagg_color" (click)="usertaggedname(tagged);"  [ngStyle]="{'margin-left': tagged.right+'px', 'margin-top': '-'+tagged.top+'px'}">															
+							  <div class="tagg_arrowicon lft_6"></div>
+								  {{tagged.name}}														
+							</span>
+						</span>
+					</div>
+					<div class="" *ngIf="item.coords.length>0;">						
+						<span [hidden]="showTagLabel" class="new_tagged_icon" (click)="usertagged(i);">Click for tags <img width="22" src="/public/Icons/tag.png"></span>										
+					</div>
+				</div>
+					<div class="pico_contentdetails_comment">          
+                    <ul class="comment_list zero_padding col-xs-12">
+                        <li class="zero_padding col-xs-12">
+							<div id="showProduct">
+                                <span  *ngFor="let tag of item.proImage;" (click)="usertaggedname(tag);">
+                                    <div class="square crsr-ptr"  *ngIf="tag.imageUrl">
+                                       
+                                        <div class="content" [style.background]="'url('+tag.imageUrl+ ')'" [style.background-size]="'cover'" [style.background-position]="'center'" [style.background-repeat]="'no-repeat'"></div>
+                                        <span class="price_tagged">${{tag.price}}</span>										
+                                    </div>
+                                </span>              
+                            </div>
+							<div *ngIf="item.postCaption !='null' && item.postCaption !=''" class="m_15">
+								<span class="color_thick member_name txt_capt txt_bold crsr-ptr" *ngIf="item.postCaption !='null'" id="{{item.postsId}}" (click)="memberprofile()">{{name}}</span>
+								<span class="name_comment" *ngFor="let caption of item.postCaption;">
+									<span *ngIf="caption != 'null'">
+										<span class="color_thick color_opacity member_name" id="{{item.postsId}}" *ngIf="caption.charAt(0) != '#' && caption.charAt(0) != '@'">{{caption}}</span>													
+										<span class="color_thick member_name caption_color crsr-ptr" id="{{item.postsId}}"  (click)="membercaption(caption)"  *ngIf="caption.charAt(0) == '#'">{{caption}}</span>
+										<span class="color_thick member_name caption_color crsr-ptr" id="{{item.postsId}}" (click)="memberprofilecaptionn(caption)" *ngIf="caption.charAt(0) == '@'">{{caption}}</span>                                    
+									</span>
+								</span>
+							</div>
+							<div *ngIf="(item.postCaption !='null' && item.postCaption !='') || isThumb" class="brdr_btm"></div>
+                        </li>
+                    </ul>
+                </div>
+                        
+                <div>
+                    <div class="col-md-4 col-sm-4 col-xs-4 text-center likeList small_size"> 
+                        <span class="crsr-ptr" *ngIf="!item.likeStatus" (click)="likeactive(item.postId, item.postsType,i)">
+                           <img src="/public/images/heart.png" class="heart_icon">
+						    {{item.getCount}}
+						</span>
+                        <span class="crsr-ptr" *ngIf="item.likeStatus" (click)="likedeactive(item.postId, item.postsType,i)">
+                           <img src="/public/images/heart-red.png" class="heart_icon">
+						    {{item.getCount}}
+                        </span>
+                       
+                    </div>
+                     	<div class="col-md-4 col-sm-4 col-xs-4 text-center likeList small_size">
+							<span class="crsr-ptr m_t-2"  data-toggle="modal" data-target="#myModal_list" (click)="getActiveID(item.postId)">
+								<img  *ngIf="!item.listStatus"  src="/public/images/star.png" class="star_icon">
+								<img  *ngIf="item.listStatus"   src="/public/images/star-red.png" class="star_icon">
+								{{item.getListCount}}
+							</span>
+						</div>
+						<div class="col-md-4 col-sm-4 col-xs-4 text-center likeList small_size">
+							<span class="crsr-ptr m_t-2" (click)="shareFun()" data-toggle="modal" data-target="#myModall">
+								<img src="/public/Icons/arrow-right.png" class="more_icon"> 
+								More
+							</span>
+						</div>
+                </div>
+      
+
+                <!-- popup modal -->
+			<div *ngIf="!isLogin" class="modal fade" id="myModall" role="dialog">
+				<div class="modal-dialog modal-md">
+					<div class="modal-content">
+						<div class="modal-body">
+                            	<div class="report_cancel_share col-xs-12"> 
+							   <div class="">
+								<span class="pad-right">   Share: </span>
+                                    <span class="fa-stack fa-lg crsr-ptr" (click)="fbShare()">
+									<i class="fa fa-circle-thin fa-stack-2x"></i>
+									<i class="fa fa-facebook fa-stack-1x"></i>
+									</span>
+									<span class="fa-stack fa-lg crsr-ptr" (click)="twitterShare()">
+									<i class="fa fa-circle-thin fa-stack-2x"></i>
+									<i class="fa fa-twitter fa-stack-1x"></i>
+									</span>
+										 <span class="fa-stack fa-lg crsr-ptr" ceiboShare [pinterest]="{url:repoUrl, media: imageUrl, description:postCaption}">
+									<i class="fa fa-circle-thin fa-stack-2x"></i>
+									<i class="fa fa-pinterest-p fa-stack-1x"></i>
+									</span>
+									 <span class="fa-stack fa-lg crsr-ptr" (click)="copyToClipboard();">
+									<i class="fa fa-circle-thin fa-stack-2x"></i>
+									<i class="fa fa-link fa-stack-1x"></i>
+									</span>
+									<span class="right linkCopy">Link Copied</span>
+								</div>
+							</div>
+							<span [hidden]="!isOwner" class="report_cancel col-xs-12 inappropriate" (click)="reportPost(0);"> {{rep_inapp}}
+								<span class="report_gif" *ngIf="buffer_iapp"><img src="/public/images/ajax-loader2.gif" alt="loader"></span>
+							</span>
+							<span [hidden]="!isOwner" class="report_cancel col-xs-12 spam" (click)="reportPost(1);">{{rep_spam}}
+								<span class="report_gif" *ngIf="buffer_spam"><img src="/public/images/ajax-loader2.gif" alt="loader"></span>
+							</span>
+							<span [hidden]="isOwner" (click)="updatePost();" class="report_cancel col-xs-12">Update</span>
+								<span [hidden]="isOwner"  data-toggle="modal" data-target="#dltModall" class="report_cancel col-xs-12">Delete</span>
+							<span class="report_cancel col-xs-12" data-dismiss="modal">Cancel</span>
+						</div>
+					</div>
+				</div>
+			</div>
+				<div class="modal fade deletecomment" id="dltModall" role="dialog">
+				<div class="modal-dialog modal-md">
+					<div class="modal-content">
+						<div class="modal-body">
+							 <div class="text-center std-size" [ngClass]="(dltType == 'warning')?'warning':'success'">
+						
+							<i *ngIf="dltType != 'warning'"  class="fa fa-check-circle-o" aria-hidden="true"></i>	<i *ngIf="dltType == 'warning'" class="fa fa-exclamation-triangle" aria-hidden="true"></i> {{dltMsg}}
+							 </div>
+                                 <div *ngIf="dltType == 'warning'"  class="form-group frm-grp col-md-12 text-right dlt_btn_container">
+									<img *ngIf="buffer_dlt" src="/public/images/ajax-loader2.gif" alt="loader">
+									<button type="button" class="btn btn-default dlt_btn dlt_btn_mrg" (click)=deletePost()>YES</button>
+									<button type="button" class="btn btn-default dlt_btn" data-dismiss="modal" (click)=cancel()>NO</button>
+								</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Twitter share Modal -->
+			<div class="modal fade" id="twtrShare" role="dialog">
+				<div class="modal-dialog modal-md">
+					<div class="modal-content">
+						<div class="modal-body">
+							 <div class="col-xs-12" style="padding: 15px;font-size: 18px;">
+								<span class="col-xs-10 pad-0">
+									<span><i class="fa fa-twitter" style="font-size:25px;color: #40aced;vertical-align: middle;" aria-hidden="true"></i></span>
+									<span style="font-weight: bold;">&nbsp; Share with your friends</span>
+								</span>
+								<span class="col-xs-2 pad-0 text-right">
+									<!--<i class="fa fa-user twtrUsr" aria-hidden="true"></i>-->
+									<img style="padding: 5px;" width="40px" src="{{ppic}}" onerror="this.src='/public/images/user.jpg'">	
+								</span>
+							 </div>
+							 <div class="c0l-xs-12" style="padding: 15px;">
+								 <textarea class="twtrTextArea small-font" [(ngModel)]="twtrText" name="twtrShareText" #twtrShareText="ngModel" cols="5" rows="4" maxlength="150"></textarea>
+							 </div>
+							 <div class="col-xs-12 text-right small-font" style="padding: 0px 15px 15px;">
+								<span style="padding: 0 10px;color: #999;">{{150 - twtrText.length}}</span>
+								<span>
+									<button class="tweetBtn" (click)="tweet()">Tweet</button>
+								</span>
+							 </div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- delete comment -->
+			<div class="modal fade deletecomment" id="myModal_delete" role="dialog">
+				<div class="modal-dialog modal-md">
+					<div class="modal-content">
+						<div class="modal-body">
+							<span class="report_cancel col-xs-12 color_focus  member_name" data-dismiss="modal" (click)="commentmodaldelete()">Delete Comment</span>
+							<!--<span class="report_cancel col-xs-12">Embed</span>-->
+							<span class="report_cancel col-xs-12" data-dismiss="modal">Cancel</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End popup modal -->
+					<!-- login modal -->
+
+			<div class="modal fade" id="loginModal1" role="dialog">
+				<div class="modal-dialog modal-md lgn_mdl_tp">
+					<div class="modal-content">
+						<div class="modal-body">
+							<publicLogin [dataObj]="dataObj"></publicLogin>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- End popup modal -->
+
+        <!-- Add List -->
+		<div *ngIf="!isLogin" class="modal fade" id="myModal_list" role="dialog">
+			<div class="modal-dialog modal-md pad_50">
+				<div class="modal-content">
+					<div class="modal-body" >
+						<div >
+							<div class="report_cancel col-xs-12 add_list_input_cont">
+								<div class="col-xs-9 zero_padding" >
+									<input type="text" name="list" placeholder="Create a new list" [(ngModel)]="newListname" #list="ngModel"/>
+								</div>
+								<div class="col-xs-3 zero_padding">
+									<input type="button" value="save" class="saveBtn" (click)="addnewlist()"/>
+								</div>
+							</div>
+							<div class="lableview col-xs-12 newListLable" (click)="showAddList()" id="hideShowLable">
+								Create a new list
+							</div>
+							<span class="report_cancel col-xs-12 user_lists"  *ngFor="let s of userLists; let ui = index;" (click)="addToList(s.id, s.selected, ui)">{{s.name}} 
+								<span class="crsr-ptr" *ngIf="s.selected == 1"><img width="20" src="/public/images/star-red.png"></span>
+							</span>
+							<span class="report_cancel col-xs-12" data-dismiss="modal">Done</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- End popup modal -->
+            </div>
+        </div>
+    </div>
+	
+    </div>
+
+</div>
+
+</html>

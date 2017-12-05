@@ -1,0 +1,3 @@
+
+
+var imageUrl = '../public/images/';

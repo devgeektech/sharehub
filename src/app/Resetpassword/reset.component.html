@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Merriment - Find your happy place</title>
+    <link rel="icon" type="image/gif/png" href="/public/images/picoTitleLogo.png">
+</head>
+
+<div class="container-fluid picogram_total">
+    <div class="container landing_login_signup login_mobile_imgg" style="">
+        <div class="col-xs-12 hidden-xs hidden-sm col-sm-6 col-md-6 zero_padding mobile_image">
+            <div id="carouselHacked" class="carousel slide carousel-fade" data-ride="carousel">
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner" role="listbox">
+                    <div class="item active">
+                        <img class="change_image img-responsive" src="https://instagramstatic-a.akamaihd.net/h1/images/homepage/screenshot1.jpg/aafd8c6b005d.jpg">
+                    </div>
+                    <div class="item">
+                        <img class="change_image img-responsive" src="https://instagramstatic-a.akamaihd.net/h1/images/homepage/screenshot2.jpg/2d9d7248af43.jpg">
+                    </div>
+                    <div class="item">
+                        <img class="change_image img-responsive" src="https://instagramstatic-a.akamaihd.net/h1/images/homepage/screenshot3.jpg/629d23a3c7b2.jpg">
+                    </div>
+                    <div class="item">
+                        <img class="change_image img-responsive" src="https://instagramstatic-a.akamaihd.net/h1/images/homepage/screenshot4.jpg/001bc33056c1.jpg">
+                    </div>
+                    <div class="item">
+                        <img class="change_image img-responsive" src="https://instagramstatic-a.akamaihd.net/h1/images/homepage/screenshot5.jpg/f5ae123ab1e2.jpg">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6 zero_padding login_mobile_img">
+             <div class="login_pico_logo col-xs-12 zero_padding" style="text-align:center;">
+                <span class=""><img src="/public/images/pico_logo.png" alt="picogram"></span>               
+            </div>
+            <h2 class="col-xs-12" style="text-align:center;display: inline-block;">RESET PASSWORD</h2>
+            <form [formGroup]="retypepasswordForm">
+            <div class="col-xs-12 zero_padding signup_form form-group">
+                <label for="Password" style="font-size:14px;">Password</label>
+                <span class=""><input type="password" [(ngModel)]="newPassword" name="newPassword" id="password" value="" class="sign_validation3 form-control color_thick color_opacity icon_err_right" placeholder="Password"><i class="icon_err_right"></i></span>
+                <control-messages [control]="retypepasswordForm.controls.newPassword" style="font-size:14px;text-align:center;"></control-messages>
+            </div>
+            <div class="col-xs-12 zero_padding signup_form form-group">
+                <label for="Re-Password" style="font-size:14px;">Retype-Password</label>
+                <span class=""><input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" id="repassword" value="" class="sign_validation3 form-control color_thick color_opacity icon_err_right" placeholder="RetypePassword"><i class="icon_err_right"></i></span>        
+                <control-messages [control]="retypepasswordForm.controls.confirmPassword" style="font-size:14px;text-align:center;"></control-messages>                
+            </div>
+            
+            <div class="col-xs-12 zero_padding signup_form">
+                <span class="bufferlogin_gif" *ngIf="bufferlogin"><img src="/public/images/ajax-loader2.gif" alt="loader"></span>
+                <span class="col-xs-12 zero_padding"><button type="submit" [disabled]="!retypepasswordForm.valid" (click)="changePassword();" class="landing_click login_click col-xs-12 zero_padding" style="font-size:14px;">Submit</button></span>
+            </div>
+            <div style="font-size:14px;color:#FF5A5F;text-align: center;" *ngIf="resetpasserror">{{resetpasserror}}</div>
+            <div style="font-size:14px;color:green;text-align: center;" *ngIf="resetpassSuccess">Passwords update!</div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--<footer></footer>-->
+</html>
